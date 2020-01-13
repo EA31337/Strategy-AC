@@ -10,15 +10,12 @@ struct Stg_AC_EURUSD_M5_Params : Stg_AC_Params {
     symbol = "EURUSD";
     tf = PERIOD_M5;
     AC_Shift = 0;
-    AC_TrailingStopMethod = 0;
-    AC_TrailingProfitMethod = 0;
+    AC_SignalOpenMethod = 0;
     AC_SignalOpenLevel = 0;
-    AC_SignalBaseMethod = 0;
-    AC_SignalOpenMethod1 = 0;
-    AC_SignalOpenMethod2 = 0;
+    AC_SignalCloseMethod = 0;
     AC_SignalCloseLevel = 0;
-    AC_SignalCloseMethod1 = 0;
-    AC_SignalCloseMethod2 = 0;
+    AC_PriceLimitMethod = 0;
+    AC_PriceLimitLevel = 0;
     AC_MaxSpread = 0;
   }
 };
