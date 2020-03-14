@@ -89,41 +89,30 @@ class Stg_AC : public Strategy {
 
   /**
    * Check strategy's opening signal.
-   *
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    bool _result = false;
-    double ac_0 = ((Indi_AC *)this.Data()).GetValue(0);
-    double ac_1 = ((Indi_AC *)this.Data()).GetValue(1);
-    double ac_2 = ((Indi_AC *)this.Data()).GetValue(2);
-    bool is_valid = fmin(fmin(ac_0, ac_1), ac_2) != 0;
+    Indicator *_indi = Data();
+    bool _is_valid = _indi[CURR].IsValid();
+    bool _result = _is_valid;
     switch (_cmd) {
-      /*
-        //1. Acceleration/Deceleration - AC
-        //Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
-        3 consecutive columns are green
-        //Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and 3
-        consecutive columns are red if
-        ((iAC(NULL,piac,0)>=0&&iAC(NULL,piac,0)>iAC(NULL,piac,1)&&iAC(NULL,piac,1)>iAC(NULL,piac,2))||(iAC(NULL,piac,0)<=0
-        && iAC(NULL,piac,0)>iAC(NULL,piac,1)&&iAC(NULL,piac,1)>iAC(NULL,piac,2)&&iAC(NULL,piac,2)>iAC(NULL,piac,3)))
-        if
-        ((iAC(NULL,piac,0)<=0&&iAC(NULL,piac,0)<iAC(NULL,piac,1)&&iAC(NULL,piac,1)<iAC(NULL,piac,2))||(iAC(NULL,piac,0)>=0
-        && iAC(NULL,piac,0)<iAC(NULL,piac,1)&&iAC(NULL,piac,1)<iAC(NULL,piac,2)&&iAC(NULL,piac,2)<iAC(NULL,piac,3)))
-      */
       case ORDER_TYPE_BUY:
-        _result = ac_0 > _level && ac_0 > ac_1;
+        // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and ...
+        // ... 1 consecutive column is green.
+        _result &= _indi[0].value[0] > _level && _indi[0].value[0] > _indi[1].value[0];
         if (_method != 0) {
-          _result &= is_valid;
-          if (METHOD(_method, 0)) _result &= ac_1 > ac_2;  // @todo: one more bar.
-          // if (METHOD(_method, 0)) _result &= ac_1 > ac_2;
+          if (METHOD(_method, 0)) _result &= _indi[1].value[0] > _indi[2].value[0]; // ... 2 consecutive columns are green.
+          if (METHOD(_method, 1)) _result &= _indi[2].value[0] > _indi[3].value[0]; // ... 3 consecutive columns are green.
+          if (METHOD(_method, 2)) _result &= _indi[3].value[0] > _indi[4].value[0]; // ... 4 consecutive columns are green.
         }
         break;
       case ORDER_TYPE_SELL:
-        _result = ac_0 < -_level && ac_0 < ac_1;
+        // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and ...
+        // ... 1 consecutive column is red.
+        _result &= _indi[0].value[0] < -_level && _indi[0].value[0] < _indi[1].value[0];
         if (_method != 0) {
-          _result &= is_valid;
-          if (METHOD(_method, 0)) _result &= ac_1 < ac_2;  // @todo: one more bar.
-          // if (METHOD(_method, 0)) _result &= ac_1 < ac_2;
+          if (METHOD(_method, 0)) _result &= _indi[1].value[0] < _indi[2].value[0]; // ... 2 consecutive columns are red.
+          if (METHOD(_method, 1)) _result &= _indi[2].value[0] < _indi[3].value[0]; // ... 3 consecutive columns are red.
+          if (METHOD(_method, 2)) _result &= _indi[3].value[0] < _indi[4].value[0]; // ... 4 consecutive columns are red.
         }
         break;
     }
@@ -175,7 +164,7 @@ class Stg_AC : public Strategy {
    */
   double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
     double _trail = _level * Market().GetPipSize();
-    int _direction = Order::OrderDirection(_cmd) * (_mode == ORDER_TYPE_SL ? -1 : 1);
+    int _direction = Order::OrderDirection(_cmd, _mode);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
     switch (_method) {
