@@ -13,7 +13,7 @@ struct Stg_AC_EURUSD_M30_Params : Stg_AC_Params {
     AC_SignalCloseMethod = 0;
     AC_SignalCloseLevel = 0;
     AC_PriceLimitMethod = 0;
-    AC_PriceLimitLevel = 0;
+    AC_PriceLimitLevel = 2;
     AC_MaxSpread = 0;
   }
 } stg_ac_m30;
