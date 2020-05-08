@@ -1,0 +1,28 @@
+---
+name: Backtest
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+      - 'dev*'
+    paths-ignore:
+      - '*.md'
+  push:
+    branches:
+      - 'master'
+      - 'dev*'
+    paths-ignore:
+      - '*.md'
+
+jobs:
+  Experts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Stg_AC
+        uses: ea31337/mql-tester-action@master
+        with:
+          TestExpert: "Stg_AC"
+          BtMonths: 1
+          BtYears: 2018
