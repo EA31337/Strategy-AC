@@ -77,7 +77,7 @@ class Stg_AC : public Strategy {
     // Initialize strategy parameters.
     ACParams ac_params(_tf);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_AC(ac_params), NULL, NULL);
-    sparams.logger.SetLevel(_log_level);
+    sparams.logger.Ptr().SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.AC_SignalOpenMethod, _params.AC_SignalOpenLevel, _params.AC_SignalOpenFilterMethod,
                        _params.AC_SignalOpenBoostMethod, _params.AC_SignalCloseMethod, _params.AC_SignalCloseLevel);
