@@ -15,6 +15,7 @@
 
 // User input params.
 INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
+INPUT float AC_LotSize = 0;                                   // Lot size
 INPUT int AC_Shift = 0;                                       // Shift (relative to the current bar, 0 - default)
 INPUT int AC_SignalOpenMethod = 1;                            // Signal open method (0-1)
 INPUT double AC_SignalOpenLevel = 0.0004;                     // Signal open level (>0.0001)
@@ -42,8 +43,9 @@ struct Stg_AC_Params : StgParams {
   double AC_MaxSpread;
 
   // Constructor: Set default param values.
-  Stg_AC_Params()
-      : AC_Shift(::AC_Shift),
+  Stg_AC_Params(Trade *_trade = NULL, Indicator *_data = NULL, Strategy *_sl = NULL, Strategy *_tp = NULL)
+      : StgParams(_trade, _data, _sl, _tp),
+        AC_Shift(::AC_Shift),
         AC_SignalOpenMethod(::AC_SignalOpenMethod),
         AC_SignalOpenLevel(::AC_SignalOpenLevel),
         AC_SignalOpenFilterMethod(::AC_SignalOpenFilterMethod),
@@ -69,22 +71,21 @@ class Stg_AC : public Strategy {
 
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Stg_AC_Params _params;
+    Stg_AC_Params _stg_params;
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Stg_AC_Params>(_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
+      SetParamsByTf<Stg_AC_Params>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
                                    stg_ac_h4);
     }
     // Initialize strategy parameters.
     ACParams ac_params(_tf);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_AC(ac_params), NULL, NULL);
-    sparams.logger.Ptr().SetLevel(_log_level);
-    sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.AC_SignalOpenMethod, _params.AC_SignalOpenLevel, _params.AC_SignalOpenFilterMethod,
-                       _params.AC_SignalOpenBoostMethod, _params.AC_SignalCloseMethod, _params.AC_SignalCloseLevel);
-    sparams.SetPriceLimits(_params.AC_PriceLimitMethod, _params.AC_PriceLimitLevel);
-    sparams.SetMaxSpread(_params.AC_MaxSpread);
+    _stg_params.GetLog().SetLevel(_log_level);
+    _stg_params.SetIndicator(new Indi_AC(ac_params));
+    _stg_params.SetLotSize(::AC_LotSize);
+    _stg_params.SetMagicNo(_magic_no);
+    _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
-    Strategy *_strat = new Stg_AC(sparams, "AC");
+    Strategy *_strat = new Stg_AC(_stg_params, "AC");
+    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
@@ -97,67 +98,35 @@ class Stg_AC : public Strategy {
     bool _result = _is_valid;
     switch (_cmd) {
       case ORDER_TYPE_BUY:
-        // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and ...
+        // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
+        // ...
         // ... 1 consecutive column is green.
         _result &= _indi[0].value[0] > _level && _indi[0].value[0] > _indi[1].value[0];
         if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= _indi[1].value[0] > _indi[2].value[0]; // ... 2 consecutive columns are green.
-          if (METHOD(_method, 1)) _result &= _indi[2].value[0] > _indi[3].value[0]; // ... 3 consecutive columns are green.
-          if (METHOD(_method, 2)) _result &= _indi[3].value[0] > _indi[4].value[0]; // ... 4 consecutive columns are green.
+          if (METHOD(_method, 0))
+            _result &= _indi[1].value[0] > _indi[2].value[0];  // ... 2 consecutive columns are green.
+          if (METHOD(_method, 1))
+            _result &= _indi[2].value[0] > _indi[3].value[0];  // ... 3 consecutive columns are green.
+          if (METHOD(_method, 2))
+            _result &= _indi[3].value[0] > _indi[4].value[0];  // ... 4 consecutive columns are green.
         }
         break;
       case ORDER_TYPE_SELL:
-        // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and ...
+        // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and
+        // ...
         // ... 1 consecutive column is red.
         _result &= _indi[0].value[0] < -_level && _indi[0].value[0] < _indi[1].value[0];
         if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= _indi[1].value[0] < _indi[2].value[0]; // ... 2 consecutive columns are red.
-          if (METHOD(_method, 1)) _result &= _indi[2].value[0] < _indi[3].value[0]; // ... 3 consecutive columns are red.
-          if (METHOD(_method, 2)) _result &= _indi[3].value[0] < _indi[4].value[0]; // ... 4 consecutive columns are red.
+          if (METHOD(_method, 0))
+            _result &= _indi[1].value[0] < _indi[2].value[0];  // ... 2 consecutive columns are red.
+          if (METHOD(_method, 1))
+            _result &= _indi[2].value[0] < _indi[3].value[0];  // ... 3 consecutive columns are red.
+          if (METHOD(_method, 2))
+            _result &= _indi[3].value[0] < _indi[4].value[0];  // ... 4 consecutive columns are red.
         }
         break;
     }
     return _result;
-  }
-
-  /**
-   * Check strategy's opening signal additional filter.
-   */
-  bool SignalOpenFilter(ENUM_ORDER_TYPE _cmd, int _method = 0) {
-    bool _result = true;
-    if (_method != 0) {
-      // if (METHOD(_method, 0)) _result &= Trade().IsTrend(_cmd);
-      // if (METHOD(_method, 1)) _result &= Trade().IsPivot(_cmd);
-      // if (METHOD(_method, 2)) _result &= Trade().IsPeakHours(_cmd);
-      // if (METHOD(_method, 3)) _result &= Trade().IsRoundNumber(_cmd);
-      // if (METHOD(_method, 4)) _result &= Trade().IsHedging(_cmd);
-      // if (METHOD(_method, 5)) _result &= Trade().IsPeakBar(_cmd);
-    }
-    return _result;
-  }
-
-  /**
-   * Gets strategy's lot size boost (when enabled).
-   */
-  double SignalOpenBoost(ENUM_ORDER_TYPE _cmd, int _method = 0) {
-    bool _result = 1.0;
-    if (_method != 0) {
-      // if (METHOD(_method, 0)) if (Trade().IsTrend(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 1)) if (Trade().IsPivot(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 2)) if (Trade().IsPeakHours(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 3)) if (Trade().IsRoundNumber(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 4)) if (Trade().IsHedging(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 5)) if (Trade().IsPeakBar(_cmd)) _result *= 1.1;
-    }
-    return _result;
-  }
-
-  /**
-   * Check strategy's closing signal.
-   *
-   */
-  bool SignalClose(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    return SignalOpen(Order::NegateOrderType(_cmd), _method, _level);
   }
 
   /**
@@ -166,7 +135,7 @@ class Stg_AC : public Strategy {
   double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
     Indicator *_indi = Data();
     double _trail = _level * Market().GetPipSize();
-    int _bar_count = (int) _level * 10;
+    int _bar_count = (int)_level * 10;
     int _direction = Order::OrderDirection(_cmd, _mode);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
