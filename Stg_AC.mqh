@@ -25,6 +25,7 @@ INPUT int AC_SignalCloseMethod = 0;                           // Signal close me
 INPUT double AC_SignalCloseLevel = 0;                         // Signal close level
 INPUT int AC_PriceLimitMethod = 0;                            // Price limit method
 INPUT double AC_PriceLimitLevel = 2;                          // Price limit level
+INPUT int AC_TickFilterMethod = 0;                            // Tick filter method
 INPUT double AC_MaxSpread = 6.0;                              // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
@@ -40,6 +41,7 @@ struct Stg_AC_Params : StgParams {
   double AC_SignalCloseLevel;
   int AC_PriceLimitMethod;
   double AC_PriceLimitLevel;
+  int AC_TickFilterMethod;
   double AC_MaxSpread;
 
   // Constructor: Set default param values.
@@ -54,6 +56,7 @@ struct Stg_AC_Params : StgParams {
         AC_SignalCloseLevel(::AC_SignalCloseLevel),
         AC_PriceLimitMethod(::AC_PriceLimitMethod),
         AC_PriceLimitLevel(::AC_PriceLimitLevel),
+        AC_TickFilterMethod(::AC_TickFilterMethod),
         AC_MaxSpread(::AC_MaxSpread) {}
 };
 
@@ -101,13 +104,13 @@ class Stg_AC : public Strategy {
         // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
         // ...
         // ... 1 consecutive column is green.
-        _result &= _indi[0].value[0] > _level && _indi[0].value[0] > _indi[1].value[0];
+        _result &= _indi[0].value[0] > _level &&
+          _indi[0].value[0] > _indi[1].value[0] &&
+          _indi[1].value[0] > _indi[2].value[0];
         if (_method != 0) {
           if (METHOD(_method, 0))
-            _result &= _indi[1].value[0] > _indi[2].value[0];  // ... 2 consecutive columns are green.
-          if (METHOD(_method, 1))
             _result &= _indi[2].value[0] > _indi[3].value[0];  // ... 3 consecutive columns are green.
-          if (METHOD(_method, 2))
+          if (METHOD(_method, 1))
             _result &= _indi[3].value[0] > _indi[4].value[0];  // ... 4 consecutive columns are green.
         }
         break;
@@ -115,13 +118,13 @@ class Stg_AC : public Strategy {
         // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and
         // ...
         // ... 1 consecutive column is red.
-        _result &= _indi[0].value[0] < -_level && _indi[0].value[0] < _indi[1].value[0];
+        _result &= _indi[0].value[0] < -_level &&
+          _indi[0].value[0] < _indi[1].value[0] &&
+          _indi[1].value[0] < _indi[2].value[0];
         if (_method != 0) {
           if (METHOD(_method, 0))
-            _result &= _indi[1].value[0] < _indi[2].value[0];  // ... 2 consecutive columns are red.
-          if (METHOD(_method, 1))
             _result &= _indi[2].value[0] < _indi[3].value[0];  // ... 3 consecutive columns are red.
-          if (METHOD(_method, 2))
+          if (METHOD(_method, 1))
             _result &= _indi[3].value[0] < _indi[4].value[0];  // ... 4 consecutive columns are red.
         }
         break;

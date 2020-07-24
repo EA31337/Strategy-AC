@@ -14,6 +14,7 @@ struct Stg_AC_EURUSD_M1_Params : Stg_AC_Params {
     AC_SignalCloseLevel = 0;
     AC_PriceLimitMethod = 0;
     AC_PriceLimitLevel = 2;
+    AC_TickFilterMethod = 0;
     AC_MaxSpread = 0;
   }
 } stg_ac_m1;
