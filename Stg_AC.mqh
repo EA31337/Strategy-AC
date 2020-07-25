@@ -18,46 +18,49 @@ INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
 INPUT float AC_LotSize = 0;                                   // Lot size
 INPUT int AC_Shift = 0;                                       // Shift (relative to the current bar, 0 - default)
 INPUT int AC_SignalOpenMethod = 1;                            // Signal open method (0-1)
-INPUT double AC_SignalOpenLevel = 0.0004;                     // Signal open level (>0.0001)
-INPUT int AC_SignalOpenFilterMethod = 0;                      // Signal open filter method
+INPUT int AC_SignalOpenFilterMethod = 1;                      // Signal open filter method
+INPUT float AC_SignalOpenLevel = 0.0004f;                     // Signal open level (>0.0001)
 INPUT int AC_SignalOpenBoostMethod = 0;                       // Signal open boost method
 INPUT int AC_SignalCloseMethod = 0;                           // Signal close method
-INPUT double AC_SignalCloseLevel = 0;                         // Signal close level
+INPUT float AC_SignalCloseLevel = 0;                         // Signal close level
 INPUT int AC_PriceLimitMethod = 0;                            // Price limit method
-INPUT double AC_PriceLimitLevel = 2;                          // Price limit level
+INPUT float AC_PriceLimitLevel = 2;                          // Price limit level
 INPUT int AC_TickFilterMethod = 0;                            // Tick filter method
-INPUT double AC_MaxSpread = 6.0;                              // Max spread to trade (pips)
+INPUT float AC_MaxSpread = 6.0;                              // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_AC_Params : StgParams {
+  float AC_LotSize;
   unsigned int AC_Period;
   ENUM_APPLIED_PRICE AC_Applied_Price;
   int AC_Shift;
   int AC_SignalOpenMethod;
-  double AC_SignalOpenLevel;
   int AC_SignalOpenFilterMethod;
+  float AC_SignalOpenLevel;
   int AC_SignalOpenBoostMethod;
   int AC_SignalCloseMethod;
-  double AC_SignalCloseLevel;
+  float AC_SignalCloseLevel;
   int AC_PriceLimitMethod;
-  double AC_PriceLimitLevel;
+  float AC_PriceLimitLevel;
   int AC_TickFilterMethod;
-  double AC_MaxSpread;
+  float AC_MaxSpread;
 
   // Constructor: Set default param values.
   Stg_AC_Params(Trade *_trade = NULL, Indicator *_data = NULL, Strategy *_sl = NULL, Strategy *_tp = NULL)
       : StgParams(_trade, _data, _sl, _tp),
+        AC_LotSize(::AC_LotSize),
         AC_Shift(::AC_Shift),
         AC_SignalOpenMethod(::AC_SignalOpenMethod),
-        AC_SignalOpenLevel(::AC_SignalOpenLevel),
         AC_SignalOpenFilterMethod(::AC_SignalOpenFilterMethod),
+        AC_SignalOpenLevel(::AC_SignalOpenLevel),
         AC_SignalOpenBoostMethod(::AC_SignalOpenBoostMethod),
         AC_SignalCloseMethod(::AC_SignalCloseMethod),
         AC_SignalCloseLevel(::AC_SignalCloseLevel),
         AC_PriceLimitMethod(::AC_PriceLimitMethod),
         AC_PriceLimitLevel(::AC_PriceLimitLevel),
         AC_TickFilterMethod(::AC_TickFilterMethod),
-        AC_MaxSpread(::AC_MaxSpread) {}
+        AC_MaxSpread(::AC_MaxSpread)
+        {}
 };
 
 // Loads pair specific param values.
@@ -83,7 +86,6 @@ class Stg_AC : public Strategy {
     ACParams ac_params(_tf);
     _stg_params.GetLog().SetLevel(_log_level);
     _stg_params.SetIndicator(new Indi_AC(ac_params));
-    _stg_params.SetLotSize(::AC_LotSize);
     _stg_params.SetMagicNo(_magic_no);
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
