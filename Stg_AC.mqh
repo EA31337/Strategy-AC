@@ -1,32 +1,25 @@
-//+------------------------------------------------------------------+
-//|                  EA31337 - multi-strategy advanced trading robot |
-//|                       Copyright 2016-2020, 31337 Investments Ltd |
-//|                                       https://github.com/EA31337 |
-//+------------------------------------------------------------------+
-
 /**
  * @file
  * Implements AC strategy based on the Bill Williams' Accelerator/Decelerator oscillator.
  */
 
+// User input params.
+INPUT float AC_LotSize = 0;                // Lot size
+INPUT int AC_Shift = 0;                    // Shift (relative to the current bar, 0 - default)
+INPUT int AC_SignalOpenMethod = 1;         // Signal open method (0-1)
+INPUT int AC_SignalOpenFilterMethod = 1;   // Signal open filter method
+INPUT float AC_SignalOpenLevel = 0.0004f;  // Signal open level (>0.0001)
+INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
+INPUT int AC_SignalCloseMethod = 0;        // Signal close method
+INPUT float AC_SignalCloseLevel = 0;       // Signal close level
+INPUT int AC_PriceLimitMethod = 0;         // Price limit method
+INPUT float AC_PriceLimitLevel = 2;        // Price limit level
+INPUT int AC_TickFilterMethod = 0;         // Tick filter method
+INPUT float AC_MaxSpread = 6.0;            // Max spread to trade (pips)
+
 // Includes.
 #include <EA31337-classes/Indicators/Indi_AC.mqh>
 #include <EA31337-classes/Strategy.mqh>
-
-// User input params.
-INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
-INPUT float AC_LotSize = 0;                                   // Lot size
-INPUT int AC_Shift = 0;                                       // Shift (relative to the current bar, 0 - default)
-INPUT int AC_SignalOpenMethod = 1;                            // Signal open method (0-1)
-INPUT int AC_SignalOpenFilterMethod = 1;                      // Signal open filter method
-INPUT float AC_SignalOpenLevel = 0.0004f;                     // Signal open level (>0.0001)
-INPUT int AC_SignalOpenBoostMethod = 0;                       // Signal open boost method
-INPUT int AC_SignalCloseMethod = 0;                           // Signal close method
-INPUT float AC_SignalCloseLevel = 0;                         // Signal close level
-INPUT int AC_PriceLimitMethod = 0;                            // Price limit method
-INPUT float AC_PriceLimitLevel = 2;                          // Price limit level
-INPUT int AC_TickFilterMethod = 0;                            // Tick filter method
-INPUT float AC_MaxSpread = 6.0;                              // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_AC_Params : StgParams {
@@ -59,8 +52,7 @@ struct Stg_AC_Params : StgParams {
         AC_PriceLimitMethod(::AC_PriceLimitMethod),
         AC_PriceLimitLevel(::AC_PriceLimitLevel),
         AC_TickFilterMethod(::AC_TickFilterMethod),
-        AC_MaxSpread(::AC_MaxSpread)
-        {}
+        AC_MaxSpread(::AC_MaxSpread) {}
 };
 
 // Loads pair specific param values.
@@ -106,9 +98,8 @@ class Stg_AC : public Strategy {
         // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
         // ...
         // ... 1 consecutive column is green.
-        _result &= _indi[0].value[0] > _level &&
-          _indi[0].value[0] > _indi[1].value[0] &&
-          _indi[1].value[0] > _indi[2].value[0];
+        _result &= _indi[0].value[0] > _level && _indi[0].value[0] > _indi[1].value[0] &&
+                   _indi[1].value[0] > _indi[2].value[0];
         if (_method != 0) {
           if (METHOD(_method, 0))
             _result &= _indi[2].value[0] > _indi[3].value[0];  // ... 3 consecutive columns are green.
@@ -120,9 +111,8 @@ class Stg_AC : public Strategy {
         // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and
         // ...
         // ... 1 consecutive column is red.
-        _result &= _indi[0].value[0] < -_level &&
-          _indi[0].value[0] < _indi[1].value[0] &&
-          _indi[1].value[0] < _indi[2].value[0];
+        _result &= _indi[0].value[0] < -_level && _indi[0].value[0] < _indi[1].value[0] &&
+                   _indi[1].value[0] < _indi[2].value[0];
         if (_method != 0) {
           if (METHOD(_method, 0))
             _result &= _indi[2].value[0] < _indi[3].value[0];  // ... 3 consecutive columns are red.
@@ -150,6 +140,6 @@ class Stg_AC : public Strategy {
         _result = _indi.GetPrice(_ap, _direction > 0 ? _indi.GetHighest(_bar_count) : _indi.GetLowest(_bar_count));
         break;
     }
-    return (float) _result;
+    return (float)_result;
   }
 };
