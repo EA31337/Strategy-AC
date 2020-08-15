@@ -3,9 +3,12 @@
  * Implements AC strategy based on the Bill Williams' Accelerator/Decelerator oscillator.
  */
 
+// Includes.
+#include <EA31337-classes/Indicators/Indi_AC.mqh>
+#include <EA31337-classes/Strategy.mqh>
+
 // User input params.
 INPUT float AC_LotSize = 0;                // Lot size
-INPUT int AC_Shift = 0;                    // Shift (relative to the current bar, 0 - default)
 INPUT int AC_SignalOpenMethod = 1;         // Signal open method (0-1)
 INPUT int AC_SignalOpenFilterMethod = 1;   // Signal open filter method
 INPUT float AC_SignalOpenLevel = 0.0004f;  // Signal open level (>0.0001)
@@ -16,48 +19,30 @@ INPUT int AC_PriceLimitMethod = 0;         // Price limit method
 INPUT float AC_PriceLimitLevel = 2;        // Price limit level
 INPUT int AC_TickFilterMethod = 0;         // Tick filter method
 INPUT float AC_MaxSpread = 6.0;            // Max spread to trade (pips)
+INPUT int AC_Shift = 0;                    // Shift (relative to the current bar, 0 - default)
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_AC.mqh>
-#include <EA31337-classes/Strategy.mqh>
+// Structs.
+
+// Defines struct with default user strategy values.
+struct Stg_AC_Params_Defaults : StgParams {
+  Stg_AC_Params_Defaults()
+      : StgParams(::AC_SignalOpenMethod, ::AC_SignalOpenFilterMethod, ::AC_SignalOpenLevel, ::AC_SignalOpenBoostMethod,
+                  ::AC_SignalCloseMethod, ::AC_SignalCloseLevel, ::AC_PriceLimitMethod, ::AC_PriceLimitLevel,
+                  ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift) {}
+} stg_ac_defaults;
 
 // Struct to define strategy parameters to override.
 struct Stg_AC_Params : StgParams {
-  float AC_LotSize;
-  unsigned int AC_Period;
-  ENUM_APPLIED_PRICE AC_Applied_Price;
-  int AC_Shift;
-  int AC_SignalOpenMethod;
-  int AC_SignalOpenFilterMethod;
-  float AC_SignalOpenLevel;
-  int AC_SignalOpenBoostMethod;
-  int AC_SignalCloseMethod;
-  float AC_SignalCloseLevel;
-  int AC_PriceLimitMethod;
-  float AC_PriceLimitLevel;
-  int AC_TickFilterMethod;
-  float AC_MaxSpread;
+  StgParams sparams;
 
-  // Constructor: Set default param values.
-  Stg_AC_Params(Trade *_trade = NULL, Indicator *_data = NULL, Strategy *_sl = NULL, Strategy *_tp = NULL)
-      : StgParams(_trade, _data, _sl, _tp),
-        AC_LotSize(::AC_LotSize),
-        AC_Shift(::AC_Shift),
-        AC_SignalOpenMethod(::AC_SignalOpenMethod),
-        AC_SignalOpenFilterMethod(::AC_SignalOpenFilterMethod),
-        AC_SignalOpenLevel(::AC_SignalOpenLevel),
-        AC_SignalOpenBoostMethod(::AC_SignalOpenBoostMethod),
-        AC_SignalCloseMethod(::AC_SignalCloseMethod),
-        AC_SignalCloseLevel(::AC_SignalCloseLevel),
-        AC_PriceLimitMethod(::AC_PriceLimitMethod),
-        AC_PriceLimitLevel(::AC_PriceLimitLevel),
-        AC_TickFilterMethod(::AC_TickFilterMethod),
-        AC_MaxSpread(::AC_MaxSpread) {}
+  // Struct constructors.
+  Stg_AC_Params(StgParams &_sparams) : sparams(stg_ac_defaults) { sparams = _sparams; }
 };
 
 // Loads pair specific param values.
 #include "sets/EURUSD_H1.h"
 #include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_H8.h"
 #include "sets/EURUSD_M1.h"
 #include "sets/EURUSD_M15.h"
 #include "sets/EURUSD_M30.h"
@@ -69,15 +54,16 @@ class Stg_AC : public Strategy {
 
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Stg_AC_Params _stg_params;
+    StgParams _stg_params(stg_ac_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Stg_AC_Params>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
-                                   stg_ac_h4);
+      SetParamsByTf<StgParams>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
+                               stg_ac_h8);
     }
-    // Initialize strategy parameters.
+    // Initialize indicator.
     ACParams ac_params(_tf);
-    _stg_params.GetLog().SetLevel(_log_level);
     _stg_params.SetIndicator(new Indi_AC(ac_params));
+    // Initialize strategy parameters.
+    _stg_params.GetLog().SetLevel(_log_level);
     _stg_params.SetMagicNo(_magic_no);
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
