@@ -8,7 +8,7 @@
 
 // Inputs.
 input string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
-input int Active_Tfs = 127;               // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H4=32,H8=64...]
+input int Active_Tfs = 4;               // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H4=32,H8=64...]
 input ENUM_LOG_LEVEL Log_Level = V_INFO;  // Log level.
 input bool Info_On_Chart = true;          // Display info on chart.
 
@@ -45,6 +45,7 @@ int OnInit() {
   bool _result = true;
   EAParams ea_params(__FILE__, Log_Level);
   ea_params.SetChartInfoFreq(Info_On_Chart ? 2 : 0);
+  ea_params.SetDataStore(EA_DATA_STORE_SYMBOL);
   ea = new EA(ea_params);
   _result &= ea.StrategyAdd<Stg_AC>(Active_Tfs);
   return (_result ? INIT_SUCCEEDED : INIT_FAILED);
