@@ -84,26 +84,20 @@ class Stg_AC : public Strategy {
         // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
         // ...
         // ... 1 consecutive column is green.
-        _result &= _indi[0].value[0] > _level && _indi[0].value[0] > _indi[1].value[0] &&
-                   _indi[1].value[0] > _indi[2].value[0];
+        _result &= _indi[0][0] > _level && _indi[0][0] > _indi[1][0] && _indi[1][0] > _indi[2][0];
         if (_method != 0) {
-          if (METHOD(_method, 0))
-            _result &= _indi[2].value[0] > _indi[3].value[0];  // ... 3 consecutive columns are green.
-          if (METHOD(_method, 1))
-            _result &= _indi[3].value[0] > _indi[4].value[0];  // ... 4 consecutive columns are green.
+          if (METHOD(_method, 0)) _result &= _indi[2][0] > _indi[3][0];  // ... 3 consecutive columns are green.
+          if (METHOD(_method, 1)) _result &= _indi[3][0] > _indi[4][0];  // ... 4 consecutive columns are green.
         }
         break;
       case ORDER_TYPE_SELL:
         // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and
         // ...
         // ... 1 consecutive column is red.
-        _result &= _indi[0].value[0] < -_level && _indi[0].value[0] < _indi[1].value[0] &&
-                   _indi[1].value[0] < _indi[2].value[0];
+        _result &= _indi[0][0] < -_level && _indi[0][0] < _indi[1][0] && _indi[1][0] < _indi[2][0];
         if (_method != 0) {
-          if (METHOD(_method, 0))
-            _result &= _indi[2].value[0] < _indi[3].value[0];  // ... 3 consecutive columns are red.
-          if (METHOD(_method, 1))
-            _result &= _indi[3].value[0] < _indi[4].value[0];  // ... 4 consecutive columns are red.
+          if (METHOD(_method, 0)) _result &= _indi[2][0] < _indi[3][0];  // ... 3 consecutive columns are red.
+          if (METHOD(_method, 1)) _result &= _indi[3][0] < _indi[4][0];  // ... 4 consecutive columns are red.
         }
         break;
     }
