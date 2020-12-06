@@ -3,10 +3,6 @@
  * Implements AC strategy based on the Bill Williams' Accelerator/Decelerator oscillator.
  */
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_AC.mqh>
-#include <EA31337-classes/Strategy.mqh>
-
 // User input params.
 INPUT float AC_LotSize = 0;                // Lot size
 INPUT int AC_SignalOpenMethod = 1;         // Signal open method (0-1)
