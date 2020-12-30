@@ -7,13 +7,13 @@
 INPUT float AC_LotSize = 0;               // Lot size
 INPUT int AC_SignalOpenMethod = 1;        // Signal open method (0-1)
 INPUT int AC_SignalOpenFilterMethod = 1;  // Signal open filter method
-INPUT float AC_SignalOpenLevel = 1.0f;    // Signal open level
+INPUT float AC_SignalOpenLevel = 2.0f;    // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int AC_SignalCloseMethod = 0;       // Signal close method
-INPUT float AC_SignalCloseLevel = 0;      // Signal close level
+INPUT float AC_SignalCloseLevel = 2.0f;   // Signal close level
 INPUT int AC_PriceStopMethod = 0;         // Price stop method
 INPUT float AC_PriceStopLevel = 2;        // Price stop level
-INPUT int AC_TickFilterMethod = 0;        // Tick filter method
+INPUT int AC_TickFilterMethod = 1;        // Tick filter method
 INPUT float AC_MaxSpread = 6.0;           // Max spread to trade (pips)
 INPUT int AC_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
 INPUT int AC_OrderCloseTime = -10;        // Order close time in mins (>0) or bars (<0)
