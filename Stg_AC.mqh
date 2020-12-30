@@ -7,7 +7,7 @@
 INPUT float AC_LotSize = 0;                // Lot size
 INPUT int AC_SignalOpenMethod = 1;         // Signal open method (0-1)
 INPUT int AC_SignalOpenFilterMethod = 1;   // Signal open filter method
-INPUT float AC_SignalOpenLevel = 0.0004f;  // Signal open level (>0.0001)
+INPUT float AC_SignalOpenLevel = 1.0f;     // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int AC_SignalCloseMethod = 0;        // Signal close method
 INPUT float AC_SignalCloseLevel = 0;       // Signal close level
@@ -75,27 +75,34 @@ class Stg_AC : public Strategy {
     Indicator *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid();
     bool _result = _is_valid;
-    switch (_cmd) {
-      case ORDER_TYPE_BUY:
-        // Buy: if the indicator is above zero and 2 consecutive columns are green or if the indicator is below zero and
-        // ...
-        // ... 1 consecutive column is green.
-        _result &= _indi[0][0] > _level && _indi[0][0] > _indi[1][0] && _indi[1][0] > _indi[2][0];
-        if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= _indi[2][0] > _indi[3][0];  // ... 3 consecutive columns are green.
-          if (METHOD(_method, 1)) _result &= _indi[3][0] > _indi[4][0];  // ... 4 consecutive columns are green.
-        }
-        break;
-      case ORDER_TYPE_SELL:
-        // Sell: if the indicator is below zero and 2 consecutive columns are red or if the indicator is above zero and
-        // ...
-        // ... 1 consecutive column is red.
-        _result &= _indi[0][0] < -_level && _indi[0][0] < _indi[1][0] && _indi[1][0] < _indi[2][0];
-        if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= _indi[2][0] < _indi[3][0];  // ... 3 consecutive columns are red.
-          if (METHOD(_method, 1)) _result &= _indi[3][0] < _indi[4][0];  // ... 4 consecutive columns are red.
-        }
-        break;
+    if (_is_valid) {
+      double _change_pc = Math::ChangeInPct(_indi[1][0], _indi[0][0]);
+      switch (_cmd) {
+        case ORDER_TYPE_BUY:
+          // Buy: if the indicator is above zero and a column is green.
+          _result &= _indi[0][0] > _indi[1][0] && _change_pc > _level;
+          if (_method != 0) {
+            // ... 2 consecutive columns are above level.
+            if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) > _level;
+            // ... 3 consecutive columns are green.
+            if (METHOD(_method, 1)) _result &= _indi[2][0] > _indi[3][0];
+            // ... 4 consecutive columns are green.
+            if (METHOD(_method, 2)) _result &= _indi[3][0] > _indi[4][0];
+          }
+          break;
+        case ORDER_TYPE_SELL:
+          // Sell: if the indicator is below zero and a column is red.
+          _result &= _indi[0][0] < _indi[1][0] && _change_pc < _level;
+          if (_method != 0) {
+            // ... 2 consecutive columns are below level.
+            if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) < _level;
+            // ... 3 consecutive columns are red.
+            if (METHOD(_method, 1)) _result &= _indi[2][0] < _indi[3][0];
+            // ... 4 consecutive columns are red.
+            if (METHOD(_method, 2)) _result &= _indi[3][0] < _indi[4][0];
+          }
+          break;
+      }
     }
     return _result;
   }
