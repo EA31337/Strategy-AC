@@ -112,16 +112,23 @@ class Stg_AC : public Strategy {
    */
   float PriceStop(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0f) {
     Indicator *_indi = Data();
-    double _trail = _level * Market().GetPipSize();
+    Market *_market = Market();
+    double _trail = _level * _market.GetPipSize();
     int _bar_count = (int)_level * 10;
     int _direction = Order::OrderDirection(_cmd, _mode);
+    double _change_pc = Math::ChangeInPct(_indi[1][0], _indi[0][0]);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
+    double _price_offer = _market.GetOpenOffer(_cmd);
     double _result = _default_value;
     ENUM_APPLIED_PRICE _ap = _direction > 0 ? PRICE_HIGH : PRICE_LOW;
+    _method = 2;
     switch (_method) {
       case 1:
         _result = _indi.GetPrice(
             _ap, _direction > 0 ? _indi.GetHighest<double>(_bar_count) : _indi.GetLowest<double>(_bar_count));
+        break;
+      case 2:
+        _result = Math::ChangeByPct(_price_offer, (float) _change_pc / _level / 100);
         break;
     }
     return (float)_result;
