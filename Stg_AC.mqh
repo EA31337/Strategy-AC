@@ -80,8 +80,8 @@ class Stg_AC : public Strategy {
       double _change_pc = Math::ChangeInPct(_indi[1][0], _indi[0][0]);
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          // Buy: if the indicator is above zero and a column is green.
-          _result &= _indi[0][0] > _indi[1][0] && _change_pc > _level;
+          // Buy: if the indicator is increasing and above zero and a column is green.
+          _result &= _indi[0][0] > 0 && _indi[0][0] > _indi[1][0] && _change_pc > _level;
           if (_method != 0) {
             // ... 2 consecutive columns are above level.
             if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) > _level;
@@ -92,8 +92,8 @@ class Stg_AC : public Strategy {
           }
           break;
         case ORDER_TYPE_SELL:
-          // Sell: if the indicator is below zero and a column is red.
-          _result &= _indi[0][0] < _indi[1][0] && _change_pc < _level;
+          // Sell: if the indicator is decreasing and below zero and a column is red.
+          _result &= _indi[0][0] < 0 && _indi[0][0] < _indi[1][0] && _change_pc < _level;
           if (_method != 0) {
             // ... 2 consecutive columns are below level.
             if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) < _level;
