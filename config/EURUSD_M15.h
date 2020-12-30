@@ -8,7 +8,7 @@ struct Stg_AC_Params_M15 : StgParams {
   // Struct constructor.
   Stg_AC_Params_M15() : StgParams(stg_ac_defaults) {
     lot_size = 0;
-    signal_open_method = -1;
+    signal_open_method = -2;
     signal_open_filter = 1;
     signal_open_level = 2;
     signal_open_boost = 0;
