@@ -77,12 +77,13 @@ class Stg_AC : public Strategy {
     bool _is_valid = _indi[CURR].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
-      double _change_pc = Math::ChangeInPct(_indi[1][0], _indi[0][0]);
+      double _change_pc = Math::ChangeInPct(_indi[_shift + 2][0], _indi[_shift][0], true);
       switch (_cmd) {
         case ORDER_TYPE_BUY:
           // Buy: if the indicator is increasing and above zero and a column is green.
-          _result &= _indi[0][0] > 0 && _indi[0][0] > _indi[1][0] && _change_pc > _level;
-          if (_method != 0) {
+          _result &= _indi[0][0] > 0 && _indi[0][0] > _indi[1][0];
+          _result &= _change_pc > _level;
+          if (_result && _method != 0) {
             // ... 2 consecutive columns are above level.
             if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) > _level;
             // ... 3 consecutive columns are green.
@@ -93,8 +94,9 @@ class Stg_AC : public Strategy {
           break;
         case ORDER_TYPE_SELL:
           // Sell: if the indicator is decreasing and below zero and a column is red.
-          _result &= _indi[0][0] < 0 && _indi[0][0] < _indi[1][0] && _change_pc < _level;
-          if (_method != 0) {
+          _result &= _indi[0][0] < 0 && _indi[0][0] < _indi[1][0];
+          _result &= _change_pc < -_level;
+          if (_result && _method != 0) {
             // ... 2 consecutive columns are below level.
             if (METHOD(_method, 0)) _result &= Math::ChangeInPct(_indi[2][0], _indi[1][0]) < _level;
             // ... 3 consecutive columns are red.
