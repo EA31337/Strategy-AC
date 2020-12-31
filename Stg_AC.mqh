@@ -128,7 +128,7 @@ class Stg_AC : public Strategy {
             _ap, _direction > 0 ? _indi.GetHighest<double>(_bar_count) : _indi.GetLowest<double>(_bar_count));
         break;
       case 2:
-        _result = Math::ChangeByPct(_price_offer, (float)_change_pc / _level / 100);
+        _result = Math::ChangeByPct(_price_offer, (float)(_change_pc / 100 * Math::NonZero(_level)));
         break;
     }
     return (float)_result;
