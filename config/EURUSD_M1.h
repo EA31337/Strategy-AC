@@ -10,7 +10,7 @@ struct Stg_AC_Params_M1 : StgParams {
     lot_size = 0;
     signal_open_method = -1;
     signal_open_filter = 0;
-    signal_open_level = 3;
+    signal_open_level = 10;
     signal_open_boost = 0;
     signal_close_method = 1;
     signal_close_level = 25;
