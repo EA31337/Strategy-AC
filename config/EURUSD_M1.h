@@ -15,7 +15,7 @@ struct Stg_AC_Params_M1 : StgParams {
     signal_close_method = 1;
     signal_close_level = 25;
     price_stop_method = 2;
-    price_stop_level = 1;
+    price_stop_level = 100;
     tick_filter_method = 1;
     max_spread = 0;
   }
