@@ -10,10 +10,10 @@ struct Stg_AC_Params_M15 : StgParams {
     lot_size = 0;
     signal_open_method = 4;
     signal_open_filter = 1;
-    signal_open_level = 5;
+    signal_open_level = (float)5;
     signal_open_boost = 0;
     signal_close_method = -1;
-    signal_close_level = 15;
+    signal_close_level = (float)15;
     price_stop_method = 4;
     price_stop_level = 2;
     tick_filter_method = 1;
