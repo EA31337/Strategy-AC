@@ -1,6 +1,6 @@
 AC_Indi_AC_Applied_Price={{ applied_price | replace("(ENUM_APPLIED_PRICE)", "") | int | default(0) }}
 AC_Indi_AC_MA_Method={{ ma_method | default(0) }}
-AC_Indi_AC_Period={{ period | default(4) }}
+AC_Indi_AC_Period={{ (period | default(0) | int) }}
 AC_Indi_AC_Shift={{ shift | default(0) }}
 AC_LotSize={{ lot_size | default(0) }}
 AC_PriceStopLevel,1=10
