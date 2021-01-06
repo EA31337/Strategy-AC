@@ -3,6 +3,11 @@
  * Defines default strategy parameter values for the given timeframe.
  */
 
+// Defines indicator's parameter values for the given pair symbol and timeframe.
+struct ACParams_H4 : ACParams {
+  ACParams_H4() : ACParams(indi_ac_defaults, PERIOD_H4) { shift = 0; }
+} indi_ac_h4;
+
 // Defines strategy's parameter values for the given pair symbol and timeframe.
 struct Stg_AC_Params_H4 : StgParams {
   // Struct constructor.
@@ -10,10 +15,10 @@ struct Stg_AC_Params_H4 : StgParams {
     lot_size = 0;
     signal_open_method = 0;
     signal_open_filter = 1;
-    signal_open_level = (float)2;
+    signal_open_level = (float)0.1;
     signal_open_boost = 0;
     signal_close_method = 0;
-    signal_close_level = (float)2;
+    signal_close_level = (float)0.1;
     price_stop_method = 0;
     price_stop_level = 2;
     tick_filter_method = 1;
