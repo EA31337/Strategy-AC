@@ -17,8 +17,15 @@ INPUT int AC_TickFilterMethod = 1;        // Tick filter method
 INPUT float AC_MaxSpread = 4.0;           // Max spread to trade (pips)
 INPUT int AC_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
 INPUT int AC_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
+INPUT string __AC_Indi_AC_Parameters__ = "-- AC strategy: AC indicator params --";  // >>> AC strategy: AC indicator <<<
+INPUT int AC_Indi_AC_Shift = 0;                                                     // Shift
 
 // Structs.
+
+// Defines struct with default user indicator values.
+struct Indi_AC_Params_Defaults : ACParams {
+  Indi_AC_Params_Defaults() : ACParams(::AC_Indi_AC_Shift) {}
+} indi_ac_defaults;
 
 // Defines struct with default user strategy values.
 struct Stg_AC_Params_Defaults : StgParams {
