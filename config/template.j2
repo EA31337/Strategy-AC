@@ -22,7 +22,7 @@ struct Stg_AC_Params_{{ Timeframe }} : StgParams {
     signal_close_method = {{ AC_SignalCloseMethod | default(0) }};
     signal_close_level = (float){{ AC_SignalCloseLevel | default(0) }};
     price_stop_method = {{ AC_PriceStopMethod | default(0) }};
-    price_stop_level = {{ AC_SignalCloseLevel | default(1) }};
+    price_stop_level = (float){{ AC_SignalCloseLevel | default(1) }};
     tick_filter_method = {{ AC_TickFilterMethod  | default(1) }};
     max_spread = {{ AC_MaxSpread | default(0) }};
   }
