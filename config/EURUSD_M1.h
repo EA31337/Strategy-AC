@@ -19,7 +19,7 @@ struct Stg_AC_Params_M1 : StgParams {
     signal_open_filter = 26;
     signal_open_level = (float)9.0;
     signal_open_boost = 1;
-    signal_close_method = 0;
+    signal_close_method = -3;
     signal_close_level = (float)0.1;
     price_stop_method = 0;
     price_stop_level = (float)0.1;
