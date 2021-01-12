@@ -16,7 +16,7 @@ struct Stg_AC_Params_M30 : StgParams {
   Stg_AC_Params_M30() : StgParams(stg_ac_defaults) {
     lot_size = 0;
     signal_open_method = 0;
-    signal_open_filter = 8;
+    signal_open_filter = 10;
     signal_open_level = (float)9.0;
     signal_open_boost = 1;
     signal_close_method = -4;
