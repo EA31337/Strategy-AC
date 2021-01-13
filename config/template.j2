@@ -6,7 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct ACParams_{{ Timeframe }} : ACParams {
   ACParams_{{ Timeframe }}() : ACParams(indi_ac_defaults, PERIOD_{{ Timeframe }}) {
-    shift = {{ AC_Shift | default(0) }};
+    shift = {{ AC_Indi_AC_Shift | default(0) }};
   }
 } indi_ac_{{ Timeframe | lower }};
 
