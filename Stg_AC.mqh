@@ -4,19 +4,20 @@
  */
 
 // User input params.
-INPUT float AC_LotSize = 0;               // Lot size
-INPUT int AC_SignalOpenMethod = 0;        // Signal open method (0-1)
-INPUT int AC_SignalOpenFilterMethod = 1;  // Signal open filter method
-INPUT float AC_SignalOpenLevel = 0.0f;    // Signal open level
-INPUT int AC_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int AC_SignalCloseMethod = 0;       // Signal close method
-INPUT float AC_SignalCloseLevel = 0.0f;   // Signal close level
-INPUT int AC_PriceStopMethod = 0;         // Price stop method
-INPUT float AC_PriceStopLevel = 0;        // Price stop level
-INPUT int AC_TickFilterMethod = 1;        // Tick filter method
-INPUT float AC_MaxSpread = 4.0;           // Max spread to trade (pips)
-INPUT int AC_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
-INPUT int AC_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
+INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
+INPUT float AC_LotSize = 0;                                   // Lot size
+INPUT int AC_SignalOpenMethod = 0;                            // Signal open method (0-1)
+INPUT int AC_SignalOpenFilterMethod = 1;                      // Signal open filter method
+INPUT float AC_SignalOpenLevel = 0.0f;                        // Signal open level
+INPUT int AC_SignalOpenBoostMethod = 0;                       // Signal open boost method
+INPUT int AC_SignalCloseMethod = 0;                           // Signal close method
+INPUT float AC_SignalCloseLevel = 0.0f;                       // Signal close level
+INPUT int AC_PriceStopMethod = 0;                             // Price stop method
+INPUT float AC_PriceStopLevel = 0;                            // Price stop level
+INPUT int AC_TickFilterMethod = 1;                            // Tick filter method
+INPUT float AC_MaxSpread = 4.0;                               // Max spread to trade (pips)
+INPUT int AC_Shift = 0;                                       // Shift (relative to the current bar, 0 - default)
+INPUT int AC_OrderCloseTime = -20;                            // Order close time in mins (>0) or bars (<0)
 INPUT string __AC_Indi_AC_Parameters__ = "-- AC strategy: AC indicator params --";  // >>> AC strategy: AC indicator <<<
 INPUT int AC_Indi_AC_Shift = 0;                                                     // Shift
 
@@ -59,10 +60,10 @@ class Stg_AC : public Strategy {
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
     StgParams _stg_params(stg_ac_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
-                               stg_ac_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
+                             stg_ac_h8);
+#endif
     // Initialize indicator.
     ACParams ac_params(_tf);
     _stg_params.SetIndicator(new Indi_AC(ac_params));
@@ -72,7 +73,6 @@ class Stg_AC : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_AC(_stg_params, "AC");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
