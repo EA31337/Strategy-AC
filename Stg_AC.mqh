@@ -6,15 +6,15 @@
 // User input params.
 INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
 INPUT float AC_LotSize = 0;                                   // Lot size
-INPUT int AC_SignalOpenMethod = 0;                            // Signal open method (0-1)
-INPUT int AC_SignalOpenFilterMethod = 1;                      // Signal open filter method
+INPUT int AC_SignalOpenMethod = 0;                            // Signal open method (-127-127)
+INPUT int AC_SignalOpenFilterMethod = 32;                     // Signal open filter method
 INPUT float AC_SignalOpenLevel = 0.0f;                        // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;                       // Signal open boost method
 INPUT int AC_SignalCloseMethod = 0;                           // Signal close method
 INPUT float AC_SignalCloseLevel = 0.0f;                       // Signal close level
 INPUT int AC_PriceStopMethod = 0;                             // Price stop method
 INPUT float AC_PriceStopLevel = 0;                            // Price stop level
-INPUT int AC_TickFilterMethod = 1;                            // Tick filter method
+INPUT int AC_TickFilterMethod = 32;                           // Tick filter method
 INPUT float AC_MaxSpread = 4.0;                               // Max spread to trade (pips)
 INPUT short AC_Shift = 0;                                     // Shift (relative to the current bar, 0 - default)
 INPUT int AC_OrderCloseTime = -20;                            // Order close time in mins (>0) or bars (<0)
@@ -83,28 +83,23 @@ class Stg_AC : public Strategy {
     bool _is_valid = _indi[CURR].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
+      IndicatorSignal _signals = _indi.GetSignals(4, _shift);
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          // Buy: if the indicator is above zero and 2 consecutive columns are green
-          // or if the indicator is below zero and 3 consecutive columns are green.
-          _result &= _indi.IsIncByPct(_level, 0, 0, 3);
+          // Buy: if the indicator values are increasing.
           _result &= _indi.IsIncreasing(3);
-          if (_result && _method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi.IsIncreasing(2, 0, 3);
-            if (METHOD(_method, 1)) _result &= _indi.IsIncreasing(2, 0, 5);
-            if (METHOD(_method, 2)) _result &= _indi[3][0] > _indi[4][0];
-          }
+          _result &= _indi.IsIncByPct(_level, 0, 0, 3);
+          _result &= _signals.CheckSignals(_method);
+          // And the indicator is below zero.
+          _result &= _method > 0 ? _indi[CURR][0] < 0 : true;
           break;
         case ORDER_TYPE_SELL:
-          // Sell: if the indicator is below zero and 2 consecutive columns are red
-          // or if the indicator is above zero and 3 consecutive columns are red
-          _result &= _indi.IsDecByPct(-_level, 0, 0, 3);
+          // Sell: if the indicator values are decreasing.
           _result &= _indi.IsDecreasing(3);
-          if (_result && _method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi.IsIncreasing(2, 0, 3);
-            if (METHOD(_method, 1)) _result &= _indi.IsIncreasing(2, 0, 5);
-            if (METHOD(_method, 2)) _result &= _indi[3][0] < _indi[4][0];
-          }
+          _result &= _indi.IsDecByPct(-_level, 0, 0, 3);
+          _result &= _signals.CheckSignals(_method);
+          // And the indicator is above zero.
+          _result &= _method > 0 ? _indi[CURR][0] > 0 : true;
           break;
       }
     }
