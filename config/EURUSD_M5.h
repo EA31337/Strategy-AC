@@ -14,14 +14,14 @@ struct Stg_AC_Params_M5 : StgParams {
   Stg_AC_Params_M5() : StgParams(stg_ac_defaults) {
     lot_size = 0;
     signal_open_method = 2;
-    signal_open_filter = 26;
+    signal_open_filter = 32;
     signal_open_level = (float)0.0;
     signal_open_boost = 1;
     signal_close_method = 2;
     signal_close_level = (float)30.0;
     price_stop_method = 0;
     price_stop_level = (float)10.0;
-    tick_filter_method = 1;
+    tick_filter_method = 32;
     max_spread = 0;
   }
 } stg_ac_m5;
