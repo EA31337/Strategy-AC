@@ -6,14 +6,14 @@
 // User input params.
 INPUT string __AC_Parameters__ = "-- AC strategy params --";  // >>> AC <<<
 INPUT float AC_LotSize = 0;                                   // Lot size
-INPUT int AC_SignalOpenMethod = 0;                            // Signal open method (-127-127)
+INPUT int AC_SignalOpenMethod = 2;                            // Signal open method (-127-127)
 INPUT int AC_SignalOpenFilterMethod = 32;                     // Signal open filter method
 INPUT float AC_SignalOpenLevel = 0.0f;                        // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;                       // Signal open boost method
-INPUT int AC_SignalCloseMethod = 0;                           // Signal close method
+INPUT int AC_SignalCloseMethod = 2;                           // Signal close method
 INPUT float AC_SignalCloseLevel = 0.0f;                       // Signal close level
-INPUT int AC_PriceStopMethod = 0;                             // Price stop method
-INPUT float AC_PriceStopLevel = 0;                            // Price stop level
+INPUT int AC_PriceStopMethod = 60;                            // Price stop method
+INPUT float AC_PriceStopLevel = 1;                            // Price stop level
 INPUT int AC_TickFilterMethod = 32;                           // Tick filter method
 INPUT float AC_MaxSpread = 4.0;                               // Max spread to trade (pips)
 INPUT short AC_Shift = 0;                                     // Shift (relative to the current bar, 0 - default)
@@ -89,7 +89,7 @@ class Stg_AC : public Strategy {
           // Buy: if the indicator values are increasing.
           _result &= _indi.IsIncreasing(3);
           _result &= _indi.IsIncByPct(_level, 0, 0, 3);
-          _result &= _signals.CheckSignals(_method);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           // And the indicator is below zero.
           _result &= _method > 0 ? _indi[CURR][0] < 0 : true;
           break;
@@ -97,38 +97,12 @@ class Stg_AC : public Strategy {
           // Sell: if the indicator values are decreasing.
           _result &= _indi.IsDecreasing(3);
           _result &= _indi.IsDecByPct(-_level, 0, 0, 3);
-          _result &= _signals.CheckSignals(_method);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           // And the indicator is above zero.
           _result &= _method > 0 ? _indi[CURR][0] > 0 : true;
           break;
       }
     }
     return _result;
-  }
-
-  /**
-   * Gets price stop value for profit take or stop loss.
-   */
-  float PriceStop(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0f) {
-    Indicator *_indi = GetIndicator();
-    Chart *_chart = trade.GetChart();
-    double _trail = _level * _chart.GetPipSize();
-    int _bar_count = (int)_level * 10;
-    int _direction = Order::OrderDirection(_cmd, _mode);
-    double _change_pc = Math::ChangeInPct(_indi[1][0], _indi[0][0]);
-    double _default_value = _chart.GetCloseOffer(_cmd) + _trail * _method * _direction;
-    double _price_offer = _chart.GetOpenOffer(_cmd);
-    double _result = _default_value;
-    ENUM_APPLIED_PRICE _ap = _direction > 0 ? PRICE_HIGH : PRICE_LOW;
-    switch (_method) {
-      case 1:
-        _result = _indi.GetPrice(
-            _ap, _direction > 0 ? _indi.GetHighest<double>(_bar_count) : _indi.GetLowest<double>(_bar_count));
-        break;
-      case 2:
-        _result = Math::ChangeByPct(_price_offer, (float)(_change_pc / 100 * Math::NonZero(_level)));
-        break;
-    }
-    return (float)_result;
   }
 };
