@@ -11,6 +11,7 @@ INPUT int AC_SignalOpenFilterMethod = 32;  // Signal open filter method
 INPUT float AC_SignalOpenLevel = 0.0f;     // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int AC_SignalCloseMethod = 2;        // Signal close method
+INPUT int AC_SignalCloseFilter = 14;       // Signal close filter (-127-127)
 INPUT float AC_SignalCloseLevel = 0.0f;    // Signal close level
 INPUT int AC_PriceStopMethod = 60;         // Price stop method
 INPUT float AC_PriceStopLevel = 1;         // Price stop level
@@ -32,8 +33,8 @@ struct Indi_AC_Params_Defaults : ACParams {
 struct Stg_AC_Params_Defaults : StgParams {
   Stg_AC_Params_Defaults()
       : StgParams(::AC_SignalOpenMethod, ::AC_SignalOpenFilterMethod, ::AC_SignalOpenLevel, ::AC_SignalOpenBoostMethod,
-                  ::AC_SignalCloseMethod, ::AC_SignalCloseLevel, ::AC_PriceStopMethod, ::AC_PriceStopLevel,
-                  ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift, ::AC_OrderCloseTime) {}
+                  ::AC_SignalCloseMethod, ::AC_SignalCloseFilter, ::AC_SignalCloseLevel, ::AC_PriceStopMethod,
+                  ::AC_PriceStopLevel, ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift, ::AC_OrderCloseTime) {}
 } stg_ac_defaults;
 
 // Struct to define strategy parameters to override.
