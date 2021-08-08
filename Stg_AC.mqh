@@ -18,6 +18,8 @@ INPUT float AC_PriceStopLevel = 1;         // Price stop level
 INPUT int AC_TickFilterMethod = 32;        // Tick filter method
 INPUT float AC_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short AC_Shift = 0;                  // Shift (relative to the current bar, 0 - default)
+INPUT float AC_OrderCloseLoss = 0;         // Order close loss
+INPUT float AC_OrderCloseProfit = 0;       // Order close profit
 INPUT int AC_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("AC strategy: AC indicator params");
 INPUT int AC_Indi_AC_Shift = 0;  // Shift
@@ -34,7 +36,11 @@ struct Stg_AC_Params_Defaults : StgParams {
   Stg_AC_Params_Defaults()
       : StgParams(::AC_SignalOpenMethod, ::AC_SignalOpenFilterMethod, ::AC_SignalOpenLevel, ::AC_SignalOpenBoostMethod,
                   ::AC_SignalCloseMethod, ::AC_SignalCloseFilter, ::AC_SignalCloseLevel, ::AC_PriceStopMethod,
-                  ::AC_PriceStopLevel, ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift, ::AC_OrderCloseTime) {}
+                  ::AC_PriceStopLevel, ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift) {
+    Set(STRAT_PARAM_OCL, AC_OrderCloseLoss);
+    Set(STRAT_PARAM_OCP, AC_OrderCloseProfit);
+    Set(STRAT_PARAM_OCT, AC_OrderCloseTime);
+  }
 } stg_ac_defaults;
 
 // Struct to define strategy parameters to override.
