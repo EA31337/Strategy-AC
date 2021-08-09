@@ -8,6 +8,7 @@ INPUT_GROUP("AC strategy: strategy params");
 INPUT float AC_LotSize = 0;                // Lot size
 INPUT int AC_SignalOpenMethod = 2;         // Signal open method (-127-127)
 INPUT int AC_SignalOpenFilterMethod = 32;  // Signal open filter method
+INPUT int AC_SignalOpenFilterTime = 6;     // Signal open filter time (-127-127)
 INPUT float AC_SignalOpenLevel = 0.0f;     // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int AC_SignalCloseMethod = 2;        // Signal close method
@@ -40,6 +41,7 @@ struct Stg_AC_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCL, AC_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, AC_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, AC_OrderCloseTime);
+    Set(STRAT_PARAM_SOFT, AC_SignalOpenFilterTime);
   }
 } stg_ac_defaults;
 
