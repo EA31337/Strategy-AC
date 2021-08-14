@@ -14,7 +14,7 @@ INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int AC_SignalCloseMethod = 2;        // Signal close method
 INPUT int AC_SignalCloseFilter = 14;       // Signal close filter (-127-127)
 INPUT float AC_SignalCloseLevel = 0.0f;    // Signal close level
-INPUT int AC_PriceStopMethod = 60;         // Price stop method
+INPUT int AC_PriceStopMethod = 60;         // Price stop method (0-127)
 INPUT float AC_PriceStopLevel = 1;         // Price stop level
 INPUT int AC_TickFilterMethod = 32;        // Tick filter method
 INPUT float AC_MaxSpread = 4.0;            // Max spread to trade (pips)
@@ -23,7 +23,8 @@ INPUT float AC_OrderCloseLoss = 0;         // Order close loss
 INPUT float AC_OrderCloseProfit = 0;       // Order close profit
 INPUT int AC_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("AC strategy: AC indicator params");
-INPUT int AC_Indi_AC_Shift = 0;  // Shift
+INPUT int AC_Indi_AC_Shift = 0;                                // Shift
+ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source type
 
 // Structs.
 
@@ -76,6 +77,10 @@ class Stg_AC : public Strategy {
 #endif
     // Initialize indicator.
     ACParams ac_params(_tf);
+    ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
+#ifdef __resource__
+    ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator.ex5");
+#endif
     _stg_params.SetIndicator(new Indi_AC(ac_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
