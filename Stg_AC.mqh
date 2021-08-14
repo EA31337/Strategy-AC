@@ -21,10 +21,10 @@ INPUT float AC_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short AC_Shift = 0;                  // Shift (relative to the current bar, 0 - default)
 INPUT float AC_OrderCloseLoss = 0;         // Order close loss
 INPUT float AC_OrderCloseProfit = 0;       // Order close profit
-INPUT int AC_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
+INPUT int AC_OrderCloseTime = -30;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("AC strategy: AC indicator params");
-INPUT int AC_Indi_AC_Shift = 0;                                // Shift
-ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source type
+INPUT int AC_Indi_AC_Shift = 0;                                      // Shift
+INPUT ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source type
 
 // Structs.
 
@@ -81,7 +81,7 @@ class Stg_AC : public Strategy {
     ACParams ac_params(_tf);
     ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
 #ifdef __resource__
-    ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator.ex5");
+    ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator");
 #endif
     _stg_params.SetIndicator(new Indi_AC(ac_params));
     // Initialize Strategy instance.
