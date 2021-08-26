@@ -8,7 +8,7 @@ INPUT_GROUP("AC strategy: strategy params");
 INPUT float AC_LotSize = 0;                // Lot size
 INPUT int AC_SignalOpenMethod = 2;         // Signal open method (-127-127)
 INPUT int AC_SignalOpenFilterMethod = 32;  // Signal open filter method
-INPUT int AC_SignalOpenFilterTime = 10;    // Signal open filter time (-255-255)
+INPUT int AC_SignalOpenFilterTime = 9;     // Signal open filter time (-255-255)
 INPUT float AC_SignalOpenLevel = 0.0f;     // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int AC_SignalCloseMethod = 2;        // Signal close method
