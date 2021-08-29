@@ -39,6 +39,7 @@ struct Stg_AC_Params_Defaults : StgParams {
       : StgParams(::AC_SignalOpenMethod, ::AC_SignalOpenFilterMethod, ::AC_SignalOpenLevel, ::AC_SignalOpenBoostMethod,
                   ::AC_SignalCloseMethod, ::AC_SignalCloseFilter, ::AC_SignalCloseLevel, ::AC_PriceStopMethod,
                   ::AC_PriceStopLevel, ::AC_TickFilterMethod, ::AC_MaxSpread, ::AC_Shift) {
+    Set(STRAT_PARAM_LS, AC_LotSize);
     Set(STRAT_PARAM_OCL, AC_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, AC_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, AC_OrderCloseTime);
