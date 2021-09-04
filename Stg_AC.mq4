@@ -13,6 +13,6 @@
 #include "Stg_AC.mq5"
 
 #ifdef __resource__
-#property tester_indicator "::Indicators\\Indi_TMA_True.ex4"
-#property tester_library "::Indicators\\Indi_TMA_True.ex4"
+#property tester_indicator "::Indicators\\Accelerator.ex4"
+#property tester_library "::Indicators\\Accelerator.ex4"
 #endif
