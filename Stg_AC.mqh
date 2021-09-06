@@ -19,8 +19,8 @@ INPUT float AC_PriceStopLevel = 2;         // Price stop level
 INPUT int AC_TickFilterMethod = 32;        // Tick filter method
 INPUT float AC_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short AC_Shift = 0;                  // Shift (relative to the current bar, 0 - default)
-INPUT float AC_OrderCloseLoss = 0;         // Order close loss
-INPUT float AC_OrderCloseProfit = 0;       // Order close profit
+INPUT float AC_OrderCloseLoss = 80;        // Order close loss
+INPUT float AC_OrderCloseProfit = 80;      // Order close profit
 INPUT int AC_OrderCloseTime = -30;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("AC strategy: AC indicator params");
 INPUT int AC_Indi_AC_Shift = 0;                                      // Shift
