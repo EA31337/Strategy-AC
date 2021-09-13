@@ -66,6 +66,7 @@ class Stg_AC : public Strategy {
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
     Indi_AC_Params_Defaults indi_ac_defaults;
+    ACParams ac_params(indi_ac_defaults, _tf);
     Stg_AC_Params_Defaults stg_ac_defaults;
     StgParams _stg_params(stg_ac_defaults);
 #ifdef __config__
@@ -73,7 +74,6 @@ class Stg_AC : public Strategy {
                              stg_ac_h8);
 #endif
     // Initialize indicator.
-    ACParams ac_params(_tf);
     ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
 #ifdef __resource__
     ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator");
