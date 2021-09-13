@@ -31,7 +31,7 @@ INPUT ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source t
 // Defines struct with default user indicator values.
 struct Indi_AC_Params_Defaults : ACParams {
   Indi_AC_Params_Defaults() : ACParams(::AC_Indi_AC_Shift) {}
-} indi_ac_defaults;
+};
 
 // Defines struct with default user strategy values.
 struct Stg_AC_Params_Defaults : StgParams {
@@ -45,7 +45,7 @@ struct Stg_AC_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCT, AC_OrderCloseTime);
     Set(STRAT_PARAM_SOFT, AC_SignalOpenFilterTime);
   }
-} stg_ac_defaults;
+};
 
 #ifdef __config__
 // Loads pair specific param values.
@@ -65,6 +65,8 @@ class Stg_AC : public Strategy {
 
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
+    Indi_AC_Params_Defaults indi_ac_defaults;
+    Stg_AC_Params_Defaults stg_ac_defaults;
     StgParams _stg_params(stg_ac_defaults);
 #ifdef __config__
     SetParamsByTf<StgParams>(_stg_params, _tf, stg_ac_m1, stg_ac_m5, stg_ac_m15, stg_ac_m30, stg_ac_h1, stg_ac_h4,
