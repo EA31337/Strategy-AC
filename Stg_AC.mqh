@@ -47,14 +47,6 @@ struct Stg_AC_Params_Defaults : StgParams {
   }
 } stg_ac_defaults;
 
-// Struct to define strategy parameters to override.
-struct Stg_AC_Params : StgParams {
-  StgParams sparams;
-
-  // Struct constructors.
-  Stg_AC_Params(StgParams &_sparams) : sparams(stg_ac_defaults) { sparams = _sparams; }
-};
-
 #ifdef __config__
 // Loads pair specific param values.
 #include "config/H1.h"
