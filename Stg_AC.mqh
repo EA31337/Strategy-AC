@@ -78,11 +78,11 @@ class Stg_AC : public Strategy {
 #ifdef __resource__
     ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator");
 #endif
-    _stg_params.SetIndicator(new Indi_AC(ac_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_AC(_stg_params, _tparams, _cparams, "AC");
+    _strat.SetIndicator(new Indi_AC(ac_params));
     return _strat;
   }
 
