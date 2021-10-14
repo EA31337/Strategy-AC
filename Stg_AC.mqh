@@ -30,7 +30,7 @@ INPUT ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source t
 
 // Defines struct with default user indicator values.
 struct Indi_AC_Params_Defaults : ACParams {
-  Indi_AC_Params_Defaults() : ACParams(::AC_Indi_AC_Shift) {}
+  Indi_AC_Params_Defaults() : ACParams(::AC_Indi_AC_Shift) { SetDataSourceType(::AC_Indi_AC_SourceType); }
 };
 
 // Defines struct with default user strategy values.
@@ -90,7 +90,7 @@ class Stg_AC : public Strategy {
    * Check strategy's opening signal.
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, float _level = 0.0f, int _shift = 0) {
-    Indicator *_indi = GetIndicator();
+    Indi_AC *_indi = GetIndicator();
     bool _result = _indi.GetFlag(INDI_ENTRY_FLAG_IS_VALID, _shift);
     if (!_result) {
       // Returns false when indicator data is not valid.
