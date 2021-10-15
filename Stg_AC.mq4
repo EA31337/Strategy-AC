@@ -12,7 +12,7 @@
 // Includes the main code.
 #include "Stg_AC.mq5"
 
+// Load external resources.
 #ifdef __resource__
-#property tester_indicator "::Indicators\\Accelerator.ex4"
-#property tester_library "::Indicators\\Accelerator.ex4"
+#resource STG_AC_INDI_FILE
 #endif

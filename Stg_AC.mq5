@@ -17,13 +17,6 @@ input int Active_Tfs = 19712;             // Timeframes (M1=1,M2=2,M5=16,M15=256
 input ENUM_LOG_LEVEL Log_Level = V_INFO;  // Log level.
 input bool Info_On_Chart = true;          // Display info on chart.
 
-// Load external resources.
-#ifdef __resource__
-#ifdef __MQL5__
-#resource "\\Indicators\\Examples\\Accelerator.ex5"
-#endif
-#endif
-
 // Includes strategy.
 #include "Stg_AC.mqh"
 
@@ -46,6 +39,13 @@ input bool Info_On_Chart = true;          // Display info on chart.
 #ifdef __MQL5__
 #property tester_indicator "::Indicators\\Examples\\Accelerator.ex5"
 #property tester_library "::Indicators\\Examples\\Accelerator.ex5"
+#endif
+#endif
+
+// Load external resources.
+#ifdef __resource__
+#ifdef __MQL5__
+#resource STG_AC_INDI_FILE
 #endif
 #endif
 

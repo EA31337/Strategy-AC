@@ -76,7 +76,7 @@ class Stg_AC : public Strategy {
     // Initialize indicator.
     ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
 #ifdef __resource__
-    ac_params.SetCustomIndicatorName("::Indicators\\Examples\\Accelerator");
+    ac_params.SetCustomIndicatorName("::" + STG_AC_INDI_FILE);
 #endif
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
