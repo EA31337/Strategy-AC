@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct ACParams_M15 : ACParams {
-  ACParams_M15() : ACParams(indi_ac_defaults, PERIOD_M15) { shift = 0; }
+struct IndiACParams_M15 : IndiACParams {
+  IndiACParams_M15() : IndiACParams(indi_ac_defaults, PERIOD_M15) { shift = 0; }
 } indi_ac_m15;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.

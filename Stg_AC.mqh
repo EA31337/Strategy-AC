@@ -29,8 +29,8 @@ INPUT ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source t
 // Structs.
 
 // Defines struct with default user indicator values.
-struct Indi_AC_Params_Defaults : ACParams {
-  Indi_AC_Params_Defaults() : ACParams(::AC_Indi_AC_Shift) { SetDataSourceType(::AC_Indi_AC_SourceType); }
+struct Indi_AC_Params_Defaults : IndiACParams {
+  Indi_AC_Params_Defaults() : IndiACParams(::AC_Indi_AC_Shift) { SetDataSourceType(::AC_Indi_AC_SourceType); }
 };
 
 // Defines struct with default user strategy values.
@@ -66,7 +66,7 @@ class Stg_AC : public Strategy {
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
     Indi_AC_Params_Defaults indi_ac_defaults;
-    ACParams ac_params(indi_ac_defaults, _tf);
+    IndiACParams ac_params(indi_ac_defaults, _tf);
     Stg_AC_Params_Defaults stg_ac_defaults;
     StgParams _stg_params(stg_ac_defaults);
 #ifdef __config__
