@@ -27,12 +27,6 @@ INPUT int AC_Indi_AC_Shift = 0;                                      // Shift
 INPUT ENUM_IDATA_SOURCE_TYPE AC_Indi_AC_SourceType = IDATA_BUILTIN;  // Source type
 
 // Structs.
-
-// Defines struct with default user indicator values.
-struct Indi_AC_Params_Defaults : IndiACParams {
-  Indi_AC_Params_Defaults() : IndiACParams(::AC_Indi_AC_Shift) { SetDataSourceType(::AC_Indi_AC_SourceType); }
-};
-
 // Defines struct with default user strategy values.
 struct Stg_AC_Params_Defaults : StgParams {
   Stg_AC_Params_Defaults()
@@ -83,11 +77,11 @@ class Stg_AC : public Strategy {
    * Event on strategy's init.
    */
   void OnInit() {
-    Indi_AC_Params_Defaults indi_ac_defaults;
-    IndiACParams ac_params(indi_ac_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    IndiACParams ac_params(::AC_Indi_AC_Shift);
 #ifdef __resource__
     ac_params.SetCustomIndicatorName("::" + STG_AC_INDI_FILE);
 #endif
+    ac_params.SetTf(Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
     ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
     SetIndicator(new Indi_AC(ac_params));
   }
