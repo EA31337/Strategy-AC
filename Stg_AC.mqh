@@ -65,8 +65,6 @@ class Stg_AC : public Strategy {
 
   static Stg_AC *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
-    Indi_AC_Params_Defaults indi_ac_defaults;
-    IndiACParams ac_params(indi_ac_defaults, _tf);
     Stg_AC_Params_Defaults stg_ac_defaults;
     StgParams _stg_params(stg_ac_defaults);
 #ifdef __config__
@@ -74,16 +72,24 @@ class Stg_AC : public Strategy {
                              stg_ac_h8);
 #endif
     // Initialize indicator.
-    ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
-#ifdef __resource__
-    ac_params.SetCustomIndicatorName("::" + STG_AC_INDI_FILE);
-#endif
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_AC(_stg_params, _tparams, _cparams, "AC");
-    _strat.SetIndicator(new Indi_AC(ac_params));
     return _strat;
+  }
+
+  /**
+   * Event on strategy's init.
+   */
+  void OnInit() {
+    Indi_AC_Params_Defaults indi_ac_defaults;
+    IndiACParams ac_params(indi_ac_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+#ifdef __resource__
+    ac_params.SetCustomIndicatorName("::" + STG_AC_INDI_FILE);
+#endif
+    ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
+    SetIndicator(new Indi_AC(ac_params));
   }
 
   /**
