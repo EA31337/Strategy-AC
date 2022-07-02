@@ -82,8 +82,7 @@ class Stg_AC : public Strategy {
     ac_params.SetCustomIndicatorName("::" + STG_AC_INDI_FILE);
 #endif
     ac_params.SetTf(Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
-    ac_params.SetDataSourceType(AC_Indi_AC_SourceType);
-    SetIndicator(new Indi_AC(ac_params));
+    SetIndicator(new Indi_AC(ac_params, ::AC_Indi_AC_SourceType));
   }
 
   /**
