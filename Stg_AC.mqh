@@ -100,16 +100,16 @@ class Stg_AC : public Strategy {
     switch (_cmd) {
       case ORDER_TYPE_BUY:
         // Buy: if the indicator values are increasing.
-        _result &= _indi.IsIncreasing(_method);
-        _result &= _indi.IsIncByPct(_level, 0, 0, _method);
+        _result &= _indi.IsIncreasing(_method, 0, _shift);
+        _result &= _indi.IsIncByPct(_level, 0, _shift, _method);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // And the indicator is below zero.
         _result &= _method > 0 ? _indi[CURR][0] < 0 : true;
         break;
       case ORDER_TYPE_SELL:
         // Sell: if the indicator values are decreasing.
-        _result &= _indi.IsDecreasing(_method);
-        _result &= _indi.IsDecByPct(-_level, 0, 0, _method);
+        _result &= _indi.IsDecreasing(_method, 0, _shift);
+        _result &= _indi.IsDecByPct(-_level, 0, _shift, _method);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // And the indicator is above zero.
         _result &= _method > 0 ? _indi[CURR][0] > 0 : true;
