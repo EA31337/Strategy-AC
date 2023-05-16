@@ -6,14 +6,14 @@
 // User input params.
 INPUT_GROUP("AC strategy: strategy params");
 INPUT float AC_LotSize = 0;                // Lot size
-INPUT int AC_SignalOpenMethod = 2;         // Signal open method (-127-127)
-INPUT int AC_SignalOpenFilterMethod = 32;  // Signal open filter method
+INPUT int AC_SignalOpenMethod = 6;         // Signal open method (0-5)
+INPUT int AC_SignalOpenFilterMethod = 0;   // Signal open filter method
 INPUT int AC_SignalOpenFilterTime = 3;     // Signal open filter time (-255-255)
-INPUT float AC_SignalOpenLevel = 0.0f;     // Signal open level
+INPUT float AC_SignalOpenLevel = 30.0f;    // Signal open level
 INPUT int AC_SignalOpenBoostMethod = 0;    // Signal open boost method
-INPUT int AC_SignalCloseMethod = 2;        // Signal close method
-INPUT int AC_SignalCloseFilter = 14;       // Signal close filter (-127-127)
-INPUT float AC_SignalCloseLevel = 0.0f;    // Signal close level
+INPUT int AC_SignalCloseMethod = 6;        // Signal close method (0-5)
+INPUT int AC_SignalCloseFilter = 32;       // Signal close filter (-127-127)
+INPUT float AC_SignalCloseLevel = 30.0f;   // Signal close level
 INPUT int AC_PriceStopMethod = 60;         // Price stop method (0-127)
 INPUT float AC_PriceStopLevel = 2;         // Price stop level
 INPUT int AC_TickFilterMethod = 32;        // Tick filter method
@@ -100,16 +100,16 @@ class Stg_AC : public Strategy {
     switch (_cmd) {
       case ORDER_TYPE_BUY:
         // Buy: if the indicator values are increasing.
-        _result &= _indi.IsIncreasing(3);
-        _result &= _indi.IsIncByPct(_level, 0, 0, 3);
+        _result &= _indi.IsIncreasing(_method);
+        _result &= _indi.IsIncByPct(_level, 0, 0, _method);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // And the indicator is below zero.
         _result &= _method > 0 ? _indi[CURR][0] < 0 : true;
         break;
       case ORDER_TYPE_SELL:
         // Sell: if the indicator values are decreasing.
-        _result &= _indi.IsDecreasing(3);
-        _result &= _indi.IsDecByPct(-_level, 0, 0, 3);
+        _result &= _indi.IsDecreasing(_method);
+        _result &= _indi.IsDecByPct(-_level, 0, 0, _method);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // And the indicator is above zero.
         _result &= _method > 0 ? _indi[CURR][0] > 0 : true;
