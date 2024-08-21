@@ -19,31 +19,90 @@ on:
       - '.git*'
 
 jobs:
-  Compile:
+  checkout-classes:
+    name: Checkout Classes repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v3.000.1
+          repository: EA31337/EA31337-classes
+      - name: Uploads source code
+        uses: actions/upload-artifact@v4
+        with:
+          name: src-classes
+          path: .
+
+  mt4:
+    name: Installs platform (4)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
+    with:
+      artifact_name: .mt4
+      artifact_overwrite: true
+      skip_cleanup: true
+      version: 4
+  mt5:
+    name: Installs platform (5)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
+    with:
+      artifact_name: .mt5
+      artifact_overwrite: true
+      skip_cleanup: true
+      version: 5
+
+  compile-mql4:
     defaults:
       run:
         shell: powershell
+    name: Compile MQL4
+    needs: [checkout-classes, mt4]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
+          name: src-classes
           path: Include/EA31337-classes
-          ref: v3.000.1
-          repository: EA31337/EA31337-classes
-      - name: Compile for MQL4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: .mt4
+      - name: Compile
         uses: fx31337/mql-compile-action@master
         with:
           include: .
-          init-platform: true
-          mt-version: 5.0.0.2361
+          mt-path: .mt4
           path: Stg_AC.mq4
           verbose: true
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Stg.ex4
+          path: '*.ex[45]'
+
+  compile-mql5:
+    defaults:
+      run:
+        shell: powershell
+    name: Compile MQL5
+    needs: [checkout-classes, mt5]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: src-classes
+          path: Include/EA31337-classes
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: .mt5
       - name: Compile for MQL5
         uses: fx31337/mql-compile-action@master
         with:
           include: .
-          mt-version: 5.0.0.2515
+          mt-path: .mt5
           path: Stg_AC.mq5
           verbose: true
       - name: List compiled files
@@ -52,5 +111,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: EA
+          name: Stg.ex4
           path: '*.ex[45]'
