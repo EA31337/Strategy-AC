@@ -50,12 +50,12 @@ jobs:
       skip_cleanup: true
       version: 5
 
-  compile-mql4:
+  compile:
     defaults:
       run:
         shell: powershell
-    name: Compile MQL4
-    needs: [checkout-classes, mt4]
+    name: Compile
+    needs: [checkout-classes, mt4, mt5]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,13 +65,13 @@ jobs:
           path: Include/EA31337-classes
       - uses: actions/download-artifact@v4
         with:
-          pattern: .mt4
+          pattern: .mt?
       - name: Compile
         uses: fx31337/mql-compile-action@master
         with:
           include: .
-          mt-path: .mt4
-          path: Stg_AC.mq4
+          mt-path: .mt${{ matrix.version }}
+          path: "**/Stg_*.mq${{ matrix.version }}"
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -79,37 +79,22 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Stg.ex4
-          path: '*.ex[45]'
+          name: Strategy
+          path: '**/Stg_*.ex[45]'
+    strategy:
+      matrix:
+        version:
+          - 4
+          - 5
+      max-parallel: 2
+    timeout-minutes: 10
 
-  compile-mql5:
-    defaults:
-      run:
-        shell: powershell
-    name: Compile MQL5
-    needs: [checkout-classes, mt5]
-    runs-on: windows-latest
+  cleanup:
+    if: inputs.skip_cleanup != true
+    name: Clean-up
+    needs: [compile]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         with:
-          name: src-classes
-          path: Include/EA31337-classes
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: .mt5
-      - name: Compile for MQL5
-        uses: fx31337/mql-compile-action@master
-        with:
-          include: .
-          mt-path: .mt5
-          path: Stg_AC.mq5
-          verbose: true
-      - name: List compiled files
-        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
-      - run: Get-Location
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Stg.ex4
-          path: '*.ex[45]'
+          name: .mt?
